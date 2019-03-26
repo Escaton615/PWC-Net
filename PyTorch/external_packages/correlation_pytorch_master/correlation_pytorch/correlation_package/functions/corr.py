@@ -1,6 +1,7 @@
 import torch
 from torch.autograd import Function
-from .._ext import corr
+# from .._ext import corr
+import correaltion_package as corr
 
 class correlation(Function):
 

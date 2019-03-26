@@ -31,4 +31,3 @@ int corr_cpu_backward(THFloatTensor *input1,
 {
     return 1;
 }
-

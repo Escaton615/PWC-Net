@@ -1,5 +1,7 @@
-#ifndef _CORR_CUDA_KERNEL
-#define _CORR_CUDA_KERNEL
+#include <cuda_runtime.h>
+
+#ifndef _CORR1D_CUDA_KERNEL
+#define _CORR1D_CUDA_KERNEL
 
 #ifdef __cplusplus
 extern "C" {

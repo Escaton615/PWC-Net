@@ -1,4 +1,8 @@
-int corr_cuda_forward(THCudaTensor *input1,
+#include <THC/THC.h>
+#include <THC.h>
+#include <THCGeneral.h>
+
+int corr1d_cuda_forward(THCudaTensor *input1,
                       THCudaTensor *input2,
                       THCudaTensor *rbot1,
                       THCudaTensor *rbot2,
@@ -10,7 +14,7 @@ int corr_cuda_forward(THCudaTensor *input1,
                       int stride2,
                       int corr_type_multiply);
 
-int corr_cuda_backward(THCudaTensor *input1,
+int corr1d_cuda_backward(THCudaTensor *input1,
                        THCudaTensor *input2,
                        THCudaTensor *rbot1,
                        THCudaTensor *rbot2,

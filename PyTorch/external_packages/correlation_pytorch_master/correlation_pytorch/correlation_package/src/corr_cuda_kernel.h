@@ -1,3 +1,5 @@
+#include <cuda_runtime.h>
+
 #ifndef _CORR_CUDA_KERNEL
 #define _CORR_CUDA_KERNEL
 
