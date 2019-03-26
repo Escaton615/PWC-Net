@@ -157,9 +157,8 @@ class PWCDCNet(nn.Module):
 
         vgrid = vgrid.permute(0,2,3,1)        
         output = nn.functional.grid_sample(x, vgrid)
-        print(x.size())
-        o = torch.ones(x.size())
-        mask = (o).cuda()
+
+        mask = torch.autograd.Variable(torch.ones(x.size())).cuda()
         mask = nn.functional.grid_sample(mask, vgrid)
         
         mask[mask<0.999] = 0
