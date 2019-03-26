@@ -21,16 +21,18 @@ class correlation(Function):
         rbot1 = input1.new()
         rbot2 = input2.new()
         output = input1.new()
-
-        corr.corr_cuda_forward(input1, input2,
-                               rbot1, rbot2,
-                               output,
-                               self.pad_size,
-                               self.kernel_size,
-                               self.max_displacement,
-                               self.stride1,
-                               self.stride2,
-                               self.corr_multiply)
+        if input1.is_cuda and input2.is_cuda:
+            corr.corr_cuda_forward(input1, input2,
+                                   rbot1, rbot2,
+                                   output,
+                                   self.pad_size,
+                                   self.kernel_size,
+                                   self.max_displacement,
+                                   self.stride1,
+                                   self.stride2,
+                                   self.corr_multiply)
+        else:
+            raise NotImplementedError()
 
         return output
 
@@ -44,17 +46,20 @@ class correlation(Function):
         grad_input1 = torch.zeros(input1.size()).cuda()
         grad_input2 = torch.zeros(input2.size()).cuda()
 
-        corr.corr_cuda_backward(input1, input2,
-                                rbot1, rbot2,
-                                grad_output,
-                                grad_input1,
-                                grad_input2,
-                                self.pad_size,
-                                self.kernel_size,
-                                self.max_displacement,
-                                self.stride1,
-                                self.stride2,
-                                self.corr_multiply)
+        if input1.is_cuda and input2.is_cuda:
+            corr.corr_cuda_backward(input1, input2,
+                                    rbot1, rbot2,
+                                    grad_output,
+                                    grad_input1,
+                                    grad_input2,
+                                    self.pad_size,
+                                    self.kernel_size,
+                                    self.max_displacement,
+                                    self.stride1,
+                                    self.stride2,
+                                    self.corr_multiply)
+        else:
+            raise NotImplementedError()
 
         return grad_input1, grad_input2
 
@@ -80,15 +85,18 @@ class correlation1d(Function):
         rbot2 = input2.new()
         output = input1.new()
 
-        corr.corr1d_cuda_forward(input1, input2,
-                               rbot1, rbot2,
-                               output,
-                               self.pad_size,
-                               self.kernel_size,
-                               self.max_displacement,
-                               self.stride1,
-                               self.stride2,
-                               self.corr_multiply)
+        if input1.is_cuda and input2.is_cuda:
+            corr.corr1d_cuda_forward(input1, input2,
+                                   rbot1, rbot2,
+                                   output,
+                                   self.pad_size,
+                                   self.kernel_size,
+                                   self.max_displacement,
+                                   self.stride1,
+                                   self.stride2,
+                                   self.corr_multiply)
+        else:
+            raise NotImplementedError()
 
         return output
 
@@ -105,16 +113,19 @@ class correlation1d(Function):
         #grad_input1 = grad_output.new()
         #grad_input2 = grad_output.new()
 
-        corr.corr1d_cuda_backward(input1, input2,
-                                rbot1, rbot2,
-                                grad_output,
-                                grad_input1,
-                                grad_input2,
-                                self.pad_size,
-                                self.kernel_size,
-                                self.max_displacement,
-                                self.stride1,
-                                self.stride2,
-                                self.corr_multiply)
+        if input1.is_cuda and input2.is_cuda:
+            corr.corr1d_cuda_backward(input1, input2,
+                                    rbot1, rbot2,
+                                    grad_output,
+                                    grad_input1,
+                                    grad_input2,
+                                    self.pad_size,
+                                    self.kernel_size,
+                                    self.max_displacement,
+                                    self.stride1,
+                                    self.stride2,
+                                    self.corr_multiply)
+        else:
+            raise NotImplementedError()
 
         return grad_input1, grad_input2
