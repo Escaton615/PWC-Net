@@ -1,7 +1,7 @@
 import torch
 from torch.autograd import Function
 # from .._ext import corr
-import correaltion_package as corr
+import correlation_package as corr
 
 class correlation(Function):
 
@@ -17,11 +17,11 @@ class correlation(Function):
     def forward(self, input1, input2):
 
         self.save_for_backward(input1, input2)
-        
-        rbot1 = input1.new()
-        rbot2 = input2.new()
+        b,c,h,w = input1.size()
+        rbot1 = input1.new().resize_((b,c,h+2*self.pad_size, w+2*self.pad_size)).zero_()
+        rbot2 = input2.new().resize_((b,c,h+2*self.pad_size, w+2*self.pad_size)).zero_()
         output = input1.new()
-
+        print("corr_cuda_forward")
         corr.corr_cuda_forward(input1, input2,
                                rbot1, rbot2,
                                output,
@@ -79,7 +79,7 @@ class correlation1d(Function):
         rbot1 = input1.new()
         rbot2 = input2.new()
         output = input1.new()
-
+        print("corr1d_cuda_forward")
         corr.corr1d_cuda_forward(input1, input2,
                                rbot1, rbot2,
                                output,

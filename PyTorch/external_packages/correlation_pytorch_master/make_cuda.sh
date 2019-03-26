@@ -2,7 +2,7 @@
 
 CUDA_PATH=/usr/local/cuda-8.0
 
-cd correlation-pytorch/correlation_package/src
+cd correlation_pytorch/correlation_package/src
 echo "Compiling correlation layer kernels by nvcc..."
 
 # TODO (JEB): Check which arches we need

@@ -10,7 +10,8 @@ import torch.nn as nn
 from torch.autograd import Variable
 import os
 os.environ['PYTHON_EGG_CACHE'] = 'tmp/' # a writable directory 
-from correlation_package.modules.corr import Correlation 
+# from correlation_package.modules.corr import Correlation
+from PWCNet.PyTorch.external_packages.correlation_pytorch_master.correlation_pytorch.correlation_package.modules.corr import Correlation
 import numpy as np
 
 
@@ -156,7 +157,9 @@ class PWCDCNet(nn.Module):
 
         vgrid = vgrid.permute(0,2,3,1)        
         output = nn.functional.grid_sample(x, vgrid)
-        mask = torch.autograd.Variable(torch.ones(x.size())).cuda()
+        print(x.size())
+        o = torch.ones(x.size())
+        mask = (o).cuda()
         mask = nn.functional.grid_sample(mask, vgrid)
         
         mask[mask<0.999] = 0

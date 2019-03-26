@@ -1,8 +1,8 @@
 import torch
 import torch.nn as nn
 from torch.autograd import Variable
-from correlation_package.modules.corr import Correlation, Correlation1d
-from correlation_package.functions.corr import correlation, correlation1d
+from PWCNet.PyTorch.external_packages.correlation_pytorch_master.correlation_pytorch.correlation_package.modules.corr import Correlation, Correlation1d
+from PWCNet.PyTorch.external_packages.correlation_pytorch_master.correlation_pytorch.correlation_package.functions.corr import correlation, correlation1d
 
 from torch.autograd import gradcheck
 
@@ -147,10 +147,10 @@ def test_correlation1d():
 
 if __name__=='__main__':
 
-    #test_correlation()
+    test_correlation()
 
     #test_correlation1d()
 
-    #test_correlation_0()
+    # test_correlation_0()
 
-    test_correlation1d_0()
+    # test_correlation1d_0()
