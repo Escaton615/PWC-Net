@@ -17,11 +17,12 @@ THCState *state = at::globalContext().getTHCState();
 
 extern "C" {
 
-    int corr1d_cuda_forward(at::Tensor *input1,
-                      at::Tensor *input2,
-                      at::Tensor *rbot1,
-                      at::Tensor *rbot2,
-                      at::Tensor *output,
+    int corr1d_cuda_forward(
+                      at::Tensor input1,
+                      at::Tensor input2,
+                      at::Tensor rbot1,
+                      at::Tensor rbot2,
+                      at::Tensor output,
                       int pad_size,
                       int kernel_size,
                       int max_displacement,
@@ -29,13 +30,14 @@ extern "C" {
                       int stride2,
                           int corr_type_multiply);
 
-    int corr1d_cuda_backward(at::Tensor *input1,
-                           at::Tensor *input2,
-                           at::Tensor *rbot1,
-                           at::Tensor *rbot2,
-                           at::Tensor *grad_output,
-                           at::Tensor *grad_input1,
-                           at::Tensor *grad_input2,
+    int corr1d_cuda_backward(
+                           at::Tensor input1,
+                           at::Tensor input2,
+                           at::Tensor rbot1,
+                           at::Tensor rbot2,
+                           at::Tensor grad_output,
+                           at::Tensor grad_input1,
+                           at::Tensor grad_input2,
                            int pad_size,
                            int kernel_size,
                            int max_displacement,
@@ -43,11 +45,11 @@ extern "C" {
                            int stride2,
                            int corr_type_multiply);
 
-    int corr_cuda_forward(at::Tensor *input1,
-                          at::Tensor *input2,
-                          at::Tensor *rbot1,
-                          at::Tensor *rbot2,
-                          at::Tensor *output,
+    int corr_cuda_forward(at::Tensor input1,
+                          at::Tensor input2,
+                          at::Tensor rbot1,
+                          at::Tensor rbot2,
+                          at::Tensor output,
                           int pad_size,
                           int kernel_size,
                           int max_displacement,
@@ -55,13 +57,13 @@ extern "C" {
                           int stride2,
                           int corr_type_multiply);
 
-    int corr_cuda_backward(at::Tensor *input1,
-                           at::Tensor *input2,
-                           at::Tensor *rbot1,
-                           at::Tensor *rbot2,
-                           at::Tensor *grad_output,
-                           at::Tensor *grad_input1,
-                           at::Tensor *grad_input2,
+    int corr_cuda_backward(at::Tensor input1,
+                           at::Tensor input2,
+                           at::Tensor rbot1,
+                           at::Tensor rbot2,
+                           at::Tensor grad_output,
+                           at::Tensor grad_input1,
+                           at::Tensor grad_input2,
                            int pad_size,
                            int kernel_size,
                            int max_displacement,
@@ -69,11 +71,11 @@ extern "C" {
                            int stride2,
                            int corr_type_multiply);
     // == Forward
-    int corr_cuda_forward(at::Tensor *input1,
-                          at::Tensor *input2,
-                          at::Tensor *rbot1,
-                          at::Tensor *rbot2,
-                          at::Tensor *output,
+    int corr_cuda_forward(at::Tensor input1,
+                          at::Tensor input2,
+                          at::Tensor rbot1,
+                          at::Tensor rbot2,
+                          at::Tensor output,
                           int pad_size,
                           int kernel_size,
                           int max_displacement,
@@ -85,11 +87,11 @@ extern "C" {
 
         // TODO: Shapechecks
 
-        int batchSize = input1->size(0);
+        int batchSize = input1.size(0);
 
-        long nInputPlane = input1->size(1);
-        long nInputRows = input1->size(2);
-        long nInputCols = input1->size(3);
+        long nInputPlane = input1.size(1);
+        long nInputRows = input1.size(2);
+        long nInputCols = input1.size(3);
         long inputWidthHeight = nInputRows * nInputCols;
 
         long kernel_radius_ = (kernel_size - 1) / 2;
@@ -109,29 +111,29 @@ extern "C" {
         int nOutputPlane = neighborhood_grid_width_ * neighborhood_grid_width_;
 
         // Inputs
-        float * input1_data = input1->data<float>();//THCudaTensor_data(state, input1);
-        float * input2_data = input2->data<float>();//THCudaTensor_data(state, input2);
+        float * input1_data = input1.data<float>();//THCudaTensor_data(state, input1);
+        float * input2_data = input2.data<float>();//THCudaTensor_data(state, input2);
         // Outputs
 
 //        THCudaTensor_resize4d(state, output, batchSize, nOutputPlane, nOutputRows, nOutputCols);
 //        THCudaTensor_zero(state, output); // added by Jinwei
 //        int size[4] = ;
-        output->resize_({batchSize, nOutputPlane, nOutputRows, nOutputCols});
-        output->zero_();
+        output.resize_({batchSize, nOutputPlane, nOutputRows, nOutputCols});
+        output.zero_();
 
-        float * output_data = output->data<float>();//THCudaTensor_data(state, output);
-        rbot1->resize_({batchSize, nInputPlane, paddedbottomheight, paddedbottomwidth});
+        float * output_data = output.data<float>();//THCudaTensor_data(state, output);
+        rbot1.resize_({batchSize, nInputPlane, paddedbottomheight, paddedbottomwidth});
 //        THCudaTensor_resize4d(state, rbot1, batchSize, nInputPlane, paddedbottomheight, paddedbottomwidth);
-        rbot2->resize_({batchSize, nInputPlane, paddedbottomheight, paddedbottomwidth});
+        rbot2.resize_({batchSize, nInputPlane, paddedbottomheight, paddedbottomwidth});
 //        THCudaTensor_resize4d(state, rbot2, batchSize, nInputPlane, paddedbottomheight, paddedbottomwidth);
 
-        rbot1->zero_();
-        rbot2->zero_();
+        rbot1.zero_();
+        rbot2.zero_();
 //        THCudaTensor_zero(state, rbot1); // added by Jinwei
 //        THCudaTensor_zero(state, rbot2); // added by Jinwei
 
-        float * rbot1_data = rbot1->data<float>();//THCudaTensor_data(state, rbot1);
-        float * rbot2_data = rbot2->data<float>();//THCudaTensor_data(state, rbot2);
+        float * rbot1_data = rbot1.data<float>();//THCudaTensor_data(state, rbot1);
+        float * rbot2_data = rbot2.data<float>();//THCudaTensor_data(state, rbot2);
         cudaStream_t stream = THCState_getCurrentStream(state);
         int pwidthheight = paddedbottomwidth * paddedbottomheight;
 
@@ -150,13 +152,14 @@ extern "C" {
 
     }
 
-    int corr_cuda_backward(at::Tensor *input1,
-                            at::Tensor *input2,
-                            at::Tensor *rbot1,
-                            at::Tensor *rbot2,
-                            at::Tensor *gradOutput,
-                            at::Tensor *gradInput1,
-                            at::Tensor *gradInput2,
+    int corr_cuda_backward(
+                            at::Tensor input1,
+                            at::Tensor input2,
+                            at::Tensor rbot1,
+                            at::Tensor rbot2,
+                            at::Tensor gradOutput,
+                            at::Tensor gradInput1,
+                            at::Tensor gradInput2,
                             int pad_size,
                             int kernel_size,
                             int max_displacement,
@@ -166,20 +169,20 @@ extern "C" {
                             )
     {
 
-        float * input1_data = input1->data<float>();//THCudaTensor_data(state, input1);
-        float * input2_data = input2->data<float>();//THCudaTensor_data(state, input2);
+        float * input1_data = input1.data<float>();//THCudaTensor_data(state, input1);
+        float * input2_data = input2.data<float>();//THCudaTensor_data(state, input2);
 
-        long nInputCols = input1->size(3);
-        long nInputRows = input1->size(2);
-        long nInputPlane = input1->size(1);
-        long batchSize = input1->size(0);
+        long nInputCols = input1.size(3);
+        long nInputRows = input1.size(2);
+        long nInputPlane = input1.size(1);
+        long batchSize = input1.size(0);
 
       //  THCudaTensor_resizeAs(state, gradInput1, input1);
       //  THCudaTensor_resizeAs(state, gradInput2, input2);
 
-        float * gradOutput_data = gradOutput->data<float>();//THCudaTensor_data(state, gradOutput);
-        float * gradInput1_data = gradInput1->data<float>();//THCudaTensor_data(state, gradInput1);
-        float * gradInput2_data = gradInput2->data<float>();//THCudaTensor_data(state, gradInput2);
+        float * gradOutput_data = gradOutput.data<float>();//THCudaTensor_data(state, gradOutput);
+        float * gradInput1_data = gradInput1.data<float>();//THCudaTensor_data(state, gradInput1);
+        float * gradInput2_data = gradInput2.data<float>();//THCudaTensor_data(state, gradInput2);
 
         long inputWidthHeight = nInputRows * nInputCols;
 
@@ -200,18 +203,18 @@ extern "C" {
         // Number of output channels amounts to displacement combinations in X and Y direction
         int nOutputPlane = neighborhood_grid_width_ * neighborhood_grid_width_;
 
-        rbot1->resize_({batchSize, nInputPlane, paddedbottomheight, paddedbottomwidth});
-        rbot2->resize_({batchSize, nInputPlane, paddedbottomheight, paddedbottomwidth});
+        rbot1.resize_({batchSize, nInputPlane, paddedbottomheight, paddedbottomwidth});
+        rbot2.resize_({batchSize, nInputPlane, paddedbottomheight, paddedbottomwidth});
 //        THCudaTensor_resize4d(state, rbot1, batchSize, nInputPlane, paddedbottomheight, paddedbottomwidth);
 //        THCudaTensor_resize4d(state, rbot2, batchSize, nInputPlane, paddedbottomheight, paddedbottomwidth);
 
-        rbot1->zero_();
-        rbot2->zero_();
+        rbot1.zero_();
+        rbot2.zero_();
 //        THCudaTensor_zero(state, rbot1); // added by Jinwei
 //        THCudaTensor_zero(state, rbot2); // added by Jinwei
 
-        float * rbot1_data = rbot1->data<float>();//THCudaTensor_data(state, rbot1);
-        float * rbot2_data = rbot2->data<float>();//THCudaTensor_data(state, rbot2);
+        float * rbot1_data = rbot1.data<float>();//THCudaTensor_data(state, rbot1);
+        float * rbot2_data = rbot2.data<float>();//THCudaTensor_data(state, rbot2);
 
         int pwidthheight = paddedbottomwidth * paddedbottomheight;
 
@@ -236,11 +239,12 @@ extern "C" {
         return 1;
     }
 
-    int corr1d_cuda_forward(at::Tensor *input1,
-                          at::Tensor *input2,
-                          at::Tensor *rbot1,
-                          at::Tensor *rbot2,
-                          at::Tensor *output,
+    int corr1d_cuda_forward(
+                          at::Tensor input1,
+                          at::Tensor input2,
+                          at::Tensor rbot1,
+                          at::Tensor rbot2,
+                          at::Tensor output,
                           int pad_size,
                           int kernel_size,
                           int max_displacement,
@@ -253,11 +257,11 @@ extern "C" {
 
         // TODO: Shapechecks
 
-        int batchSize = input1->size(0);
+        int batchSize = input1.size(0);
 
-        long nInputPlane = input1->size(1);
-        long nInputRows =  input1->size(2);
-        long nInputCols =  input1->size(3);
+        long nInputPlane = input1.size(1);
+        long nInputRows =  input1.size(2);
+        long nInputCols =  input1.size(3);
         long inputWidthHeight = nInputRows * nInputCols;
 
         long kernel_radius_ = (kernel_size - 1) / 2;
@@ -279,27 +283,27 @@ extern "C" {
         int nOutputPlane = neighborhood_grid_width_;//Same, because 1D X-correlation
 
         // Inputs
-        float * input1_data = input1->data<float>();//THCudaTensor_data(state, input1);
-        float * input2_data = input2->data<float>();//THCudaTensor_data(state, input2);
+        float * input1_data = input1.data<float>();//THCudaTensor_data(state, input1);
+        float * input2_data = input2.data<float>();//THCudaTensor_data(state, input2);
 
         // Outputs
-        output->resize_({batchSize, nOutputPlane, nOutputRows, nOutputCols});
-        output->zero_();
+        output.resize_({batchSize, nOutputPlane, nOutputRows, nOutputCols});
+        output.zero_();
 //        THCudaTensor_resize4d(state, output, batchSize, nOutputPlane, nOutputRows, nOutputCols);
 //        THCudaTensor_zero(state, output); // added by Jinwei
-        float * output_data = output->data<float>();//THCudaTensor_data(state, output);
+        float * output_data = output.data<float>();//THCudaTensor_data(state, output);
 
-        rbot1->resize_({batchSize, nInputPlane, paddedbottomheight, paddedbottomwidth});
-        rbot2->resize_({batchSize, nInputPlane, paddedbottomheight, paddedbottomwidth});
+        rbot1.resize_({batchSize, nInputPlane, paddedbottomheight, paddedbottomwidth});
+        rbot2.resize_({batchSize, nInputPlane, paddedbottomheight, paddedbottomwidth});
 //        THCudaTensor_resize4d(state, rbot1, batchSize, nInputPlane, paddedbottomheight, paddedbottomwidth);
 //        THCudaTensor_resize4d(state, rbot2, batchSize, nInputPlane, paddedbottomheight, paddedbottomwidth);
-        rbot1->zero_();
-        rbot2->zero_();
+        rbot1.zero_();
+        rbot2.zero_();
 //        THCudaTensor_zero(state, rbot1); // added by Jinwei
 //        THCudaTensor_zero(state, rbot2); // added by Jinwei
 
-        float * rbot1_data = rbot1->data<float>();//THCudaTensor_data(state, rbot1);
-        float * rbot2_data = rbot2->data<float>();//THCudaTensor_data(state, rbot2);
+        float * rbot1_data = rbot1.data<float>();//THCudaTensor_data(state, rbot1);
+        float * rbot2_data = rbot2.data<float>();//THCudaTensor_data(state, rbot2);
 
         cudaStream_t stream = THCState_getCurrentStream(state);
 
@@ -323,13 +327,14 @@ extern "C" {
 
     }
 
-    int corr1d_cuda_backward(at::Tensor *input1,
-                            at::Tensor *input2,
-                            at::Tensor *rbot1,
-                            at::Tensor *rbot2,
-                            at::Tensor *gradOutput,
-                            at::Tensor *gradInput1,
-                            at::Tensor *gradInput2,
+    int corr1d_cuda_backward(
+                            at::Tensor input1,
+                            at::Tensor input2,
+                            at::Tensor rbot1,
+                            at::Tensor rbot2,
+                            at::Tensor gradOutput,
+                            at::Tensor gradInput1,
+                            at::Tensor gradInput2,
                             int pad_size,
                             int kernel_size,
                             int max_displacement,
@@ -340,19 +345,19 @@ extern "C" {
                             )
     {
 
-        float * input1_data = input1->data<float>();//THCudaTensor_data(state, input1);
-        float * input2_data = input2->data<float>();//THCudaTensor_data(state, input2);
+        float * input1_data = input1.data<float>();//THCudaTensor_data(state, input1);
+        float * input2_data = input2.data<float>();//THCudaTensor_data(state, input2);
 
-        long nInputCols =  input1->size(3);
-        long nInputRows =  input1->size(2);
-        long nInputPlane = input1->size(1);
-        long batchSize =   input1->size(0);
+        long nInputCols =  input1.size(3);
+        long nInputRows =  input1.size(2);
+        long nInputPlane = input1.size(1);
+        long batchSize =   input1.size(0);
 
      //   THCudaTensor_resizeAs(state, gradInput1, input1);
      //   THCudaTensor_resizeAs(state, gradInput2, input2);
-        float * gradOutput_data = gradOutput->data<float>();//THCudaTensor_data(state, gradOutput);
-        float * gradInput1_data = gradInput1->data<float>();//THCudaTensor_data(state, gradInput1);
-        float * gradInput2_data = gradInput2->data<float>();//THCudaTensor_data(state, gradInput2);
+        float * gradOutput_data = gradOutput.data<float>();//THCudaTensor_data(state, gradOutput);
+        float * gradInput1_data = gradInput1.data<float>();//THCudaTensor_data(state, gradInput1);
+        float * gradInput2_data = gradInput2.data<float>();//THCudaTensor_data(state, gradInput2);
 
         long inputWidthHeight = nInputRows * nInputCols;
 
@@ -374,17 +379,17 @@ extern "C" {
         // Number of output channels amounts to displacement combinations in X direction only!!
         int nOutputPlane = neighborhood_grid_width_; // Same, because 1D X-correlation
 
-        rbot1->resize_({batchSize, nInputPlane, paddedbottomheight, paddedbottomwidth});
-        rbot2->resize_({batchSize, nInputPlane, paddedbottomheight, paddedbottomwidth});
+        rbot1.resize_({batchSize, nInputPlane, paddedbottomheight, paddedbottomwidth});
+        rbot2.resize_({batchSize, nInputPlane, paddedbottomheight, paddedbottomwidth});
 //        THCudaTensor_resize4d(state, rbot1, batchSize, nInputPlane, paddedbottomheight, paddedbottomwidth);
 //        THCudaTensor_resize4d(state, rbot2, batchSize, nInputPlane, paddedbottomheight, paddedbottomwidth);
-        rbot1->zero_();
-        rbot2->zero_();
+        rbot1.zero_();
+        rbot2.zero_();
 //        THCudaTensor_zero(state, rbot1); // added by Jinwei
 //        THCudaTensor_zero(state, rbot2); // added by Jinwei
 
-        float * rbot1_data = rbot1->data<float>();//THCudaTensor_data(state, rbot1);
-        float * rbot2_data = rbot1->data<float>();//THCudaTensor_data(state, rbot2);
+        float * rbot1_data = rbot1.data<float>();//THCudaTensor_data(state, rbot1);
+        float * rbot2_data = rbot1.data<float>();//THCudaTensor_data(state, rbot2);
 
         int pwidthheight = paddedbottomwidth * paddedbottomheight;
 

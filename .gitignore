@@ -3,3 +3,9 @@
 PyTorch/external_packages/correlation_pytorch_master/correlation_pytorch/correlation_package/functions/__pycache__/
 
 *.pyc
+
+*.o
+
+*.so
+
+*.egg
