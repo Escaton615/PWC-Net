@@ -134,7 +134,7 @@ extern "C" {
 
         float * rbot1_data = rbot1.data<float>();//THCudaTensor_data(state, rbot1);
         float * rbot2_data = rbot2.data<float>();//THCudaTensor_data(state, rbot2);
-        cudaStream_t stream = THCState_getCurrentStream(state);
+        cudaStream_t stream = at::cuda::getCurrentCUDAStream().stream();//THCState_getCurrentStream(state);
         int pwidthheight = paddedbottomwidth * paddedbottomheight;
 
         blob_rearrange_ongpu(input1_data,rbot1_data,batchSize,nInputPlane,nInputCols,nInputRows,inputWidthHeight,pad_size,pwidthheight,stream);
@@ -218,7 +218,7 @@ extern "C" {
 
         int pwidthheight = paddedbottomwidth * paddedbottomheight;
 
-        cudaStream_t stream = THCState_getCurrentStream(state);
+        cudaStream_t stream = at::cuda::getCurrentCUDAStream().stream();//THCState_getCurrentStream(state);
 
         blob_rearrange_ongpu(input1_data,rbot1_data,batchSize,nInputPlane,nInputCols,nInputRows,inputWidthHeight,pad_size,pwidthheight,stream);
 
@@ -305,7 +305,7 @@ extern "C" {
         float * rbot1_data = rbot1.data<float>();//THCudaTensor_data(state, rbot1);
         float * rbot2_data = rbot2.data<float>();//THCudaTensor_data(state, rbot2);
 
-        cudaStream_t stream = THCState_getCurrentStream(state);
+        cudaStream_t stream = at::cuda::getCurrentCUDAStream().stream();//THCState_getCurrentStream(state);
 
         int pwidthheight = paddedbottomwidth * paddedbottomheight;
 
@@ -393,7 +393,7 @@ extern "C" {
 
         int pwidthheight = paddedbottomwidth * paddedbottomheight;
 
-        cudaStream_t stream = THCState_getCurrentStream(state);
+        cudaStream_t stream = at::cuda::getCurrentCUDAStream().stream();//THCState_getCurrentStream(state);
 
         blob_rearrange_ongpu_1d(input1_data,rbot1_data,batchSize,nInputPlane,nInputCols,nInputRows,inputWidthHeight,pad_size,pwidthheight,stream);
 

@@ -17,7 +17,7 @@ class Correlation(Module):
         return
 
     def forward(self, input1, input2):
-        return correlation(self.pad_size, self.kernel_size, self.max_displacement, self.stride1, self.stride2, self.corr_multiply)(input1, input2)
+        return correlation().apply(input1, input2, self.pad_size, self.kernel_size, self.max_displacement, self.stride1, self.stride2, self.corr_multiply)
 
     def __repr__(self):
         return self.__class__.__name__

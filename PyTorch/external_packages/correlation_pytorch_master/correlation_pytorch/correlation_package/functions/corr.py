@@ -14,28 +14,38 @@ class correlation(Function):
         self.stride2 = stride2
         self.corr_multiply = corr_multiply
 
-    def forward(self, input1, input2):
+    @staticmethod
+    def forward(ctx, input1, input2, pad_size=3, kernel_size=3, max_displacement=20, stride1=1, stride2=1, corr_multiply=1):
 
-        self.save_for_backward(input1, input2)
+        ctx.save_for_backward(input1, input2)
         # b,c,h,w = input1.size()
         rbot1 = input1.new()
         rbot2 = input2.new()
         output = input1.new()
+
+        ctx.pad_size = pad_size
+        ctx.kernel_size = kernel_size
+        ctx.max_displacement = max_displacement
+        ctx.stride1 = stride1
+        ctx.stride2 = stride2
+        ctx.corr_multiply = corr_multiply
+
         if input1.is_cuda and input2.is_cuda:
             corr.corr_cuda_forward(input1, input2,
                                    rbot1, rbot2,
                                    output,
-                                   self.pad_size,
-                                   self.kernel_size,
-                                   self.max_displacement,
-                                   self.stride1,
-                                   self.stride2,
-                                   self.corr_multiply)
+                                   ctx.pad_size,
+                                   ctx.kernel_size,
+                                   ctx.max_displacement,
+                                   ctx.stride1,
+                                   ctx.stride2,
+                                   ctx.corr_multiply)
         else:
             raise NotImplementedError()
 
         return output
 
+    @staticmethod
     def backward(self, grad_output):
 
         input1, input2 = self.saved_tensors
@@ -77,6 +87,7 @@ class correlation1d(Function):
         self.stride2 = stride2
         self.corr_multiply = corr_multiply
 
+    @staticmethod
     def forward(self, input1, input2):
 
         self.save_for_backward(input1, input2)
@@ -100,6 +111,7 @@ class correlation1d(Function):
 
         return output
 
+    @staticmethod
     def backward(self, grad_output):
 
         input1, input2 = self.saved_tensors

@@ -1,4 +1,5 @@
 build.py
+setup.py
 correlation_package.egg-info/PKG-INFO
 correlation_package.egg-info/SOURCES.txt
 correlation_package.egg-info/dependency_links.txt
